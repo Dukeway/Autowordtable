@@ -111,7 +111,9 @@ If you have any questions or suggestions, please contact the developer via the f
 
 # AutoWordTable - 离线的Office Word自动填表助手
 
-一款简单易用的离线的Word表格自动填充工具，可以根据自定义知识库填写docx文件表格。之前我发布了开源的应用：基于大语言模型的自动填表应用Autotable（https://github.com/Dukeway/Autotable）。但是Autotable依靠模型识别表格中单元格的行列值，要么不准确，要么需要使用到参数更加强大的模型。Autotable使用的是python-docx，支持跨平台、简单，但不支持识别合并单元格，适用于规则表格；我在AutoWordTable中使用win32com.client方法，能处理合并单元格、精确控制，然而仅限 Windows、需要 MS Word 安装。但是更重要的是，识别准确率更高，并且完全离线。
+一款简单易用的离线的Word表格自动填充工具，可以根据自定义知识库填写docx文件表格。之前我发布了开源的应用：基于大语言模型的自动填表应用Autotable（https://github.com/Dukeway/Autotable）。
+
+但是Autotable依靠模型识别表格中单元格的行列值，要么不准确，要么需要使用到参数更加强大的模型。Autotable使用的是python-docx，支持跨平台、简单，但不支持识别合并单元格，适用于规则表格；我在AutoWordTable中使用win32com.client方法，能处理合并单元格、精确控制，然而仅限 Windows、需要 MS Word 安装。但是更重要的是，识别准确率更高，并且完全离线。
 
 
 ## 📝 功能简介
