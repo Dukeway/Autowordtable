@@ -21,10 +21,8 @@ AutoWordTable is a desktop application that automatically fills tables in Word d
 5. The program will generate a "Filled_Table.docx" file in the directory where the Word template is located.
 
 ## 🚀 Video Demonstration
-<video controls>
-  <source src="video/autowordtable.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
+video folder
 
 ## 📋 Knowledge Base Format Requirements
 
@@ -135,10 +133,7 @@ AutoWordTable是一款桌面应用程序，能够根据Excel知识库中的数�
 5. 程序将在Word模板所在目录生成"已填写表格.docx"文件
 
 ## 🚀 视频演示
-<video controls>
-  <source src="video/autowordtable.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+在video文件夹中。
 
 ## 📋 知识库格式要求
 
