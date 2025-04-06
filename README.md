@@ -1,7 +1,119 @@
-# AutoWordTable - Office Word自动填表助手
+# AutoWordTable - Offline Office Word Automatic Table Filling Assistant
 
-一款简单易用的Word表格自动填充工具，由Dukeway Zhong个人开发的开源免费软件。
+A simple and easy-to-use offline tool for automatically filling Word tables based on a custom knowledge base. Previously, I released an open-source application called Autotable (https://github.com/Dukeway/Autotable), which relies on large language models to identify cell values in tables. However, this approach is either inaccurate or requires more powerful models. Autotable uses python-docx, which is cross-platform and simple but does not support merged cells and is suitable only for regular tables. In AutoWordTable, I use the win32com.client method, which can handle merged cells and provides precise control, but it is limited to Windows and requires Microsoft Word to be installed. More importantly, it offers higher recognition accuracy and is completely offline.
 
+## 📝 Features Overview
+
+AutoWordTable is a desktop application that automatically fills tables in Word documents based on data from an Excel knowledge base. The main features include:
+
+- Reading fields and corresponding values from Excel files
+- Automatically identifying table fields in Word documents
+- Quickly filling tables based on the knowledge base
+- Automatically generating and saving the filled documents
+- Detailed operation log recording
+
+## 🚀 Usage
+
+1. Run the program and open the main interface.
+2. Click the "选择" button to choose the Excel knowledge base containing fields and field values.
+3. Click the "选择" button to choose the Word template file that needs to be filled.
+4. Click the "开始自动表格填充" button to begin processing.
+5. The program will generate a "Filled_Table.docx" file in the directory where the Word template is located.
+
+## 🚀 Video Demonstration
+<video controls>
+  <source src="video/autowordtable.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+## 📋 Knowledge Base Format Requirements
+
+The Excel knowledge base must include the following columns:
+- `Field`: The name of the field to be identified in the table.
+- `Field Value`: The value to be filled in for the corresponding field.
+
+Example:
+
+| 字段       | 字段值                 |
+|----------|---------------------|
+| Name     | Guan Yu             |
+| Age      | 42                  |
+| Position | Five Tiger Generals |
+
+## 📄 Word Template Format Requirements
+
+The program will automatically identify cells with text in the Word document as field names and fill the corresponding values into the cells to the right of the field names.
+
+## 🔧 Installation Requirements
+
+- Windows operating system
+- Python 3.6+
+- The following Python libraries:
+  - customtkinter
+  - pandas
+  - pywin32
+
+## 📦 Installation Steps
+
+### Method 1: Using Precompiled Version
+
+1. Download the latest version of the application from my GitHub page.
+2. Locate the downloaded file.
+3. Run `AutoWordTable.exe`.
+4. Select your knowledge base and the table file to be filled.
+
+### Method 2: Installing from Source Code
+
+```bash
+# Clone the repository
+git clone https://github.com/Dukeway/Autowordtable.git
+
+# Enter the project directory
+cd Autowordtable
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the program
+python main.py
+```
+
+## 🛠️ Frequently Asked Questions
+
+**Q: Why can't the program recognize my table fields?**  
+A: Ensure that the field names in the Excel knowledge base exactly match those in the Word table, including spaces and punctuation.
+
+**Q: What Word document formats are supported?**  
+A: Currently, only .docx files are supported.
+
+**Q: Does it support complex table formats?**  
+A: This program is suitable for simple structured tables and partially merged cells. Complex merged cells or nested tables may not be correctly recognized.
+
+## 📜 Open Source License
+
+This project is licensed under the MIT License. For details, see the [LICENSE](LICENSE) file.
+
+## 🙏 Acknowledgements
+
+- [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter) - Modern UI component library
+- [Pandas](https://pandas.pydata.org/) - Data processing library
+- [PyWin32](https://github.com/mhammond/pywin32) - Windows API wrapper
+
+## 📞 Contact Information
+
+If you have any questions or suggestions, please contact the developer via the following methods:
+- Email: dukeway@qq.com
+- GitHub: [dukeway](https://github.com/your-username)
+
+---
+
+**Note**: This software is open-source and free. Please do not use it for commercial purposes.
+
+
+
+# AutoWordTable - 离线的Office Word自动填表助手
+
+一款简单易用的离线的Word表格自动填充工具，可以根据自定义知识库填写docx文件表格。之前我发布了开源的应用：基于大语言模型的自动填表应用Autotable（https://github.com/Dukeway/Autotable）。但是Autotable依靠模型识别表格中单元格的行列值，要么不准确，要么需要使用到参数更加强大的模型。Autotable使用的是python-docx，支持跨平台、简单，但不支持识别合并单元格，适用于规则表格；我在AutoWordTable中使用win32com.client方法，能处理合并单元格、精确控制，然而仅限 Windows、需要 MS Word 安装。但是更重要的是，识别准确率更高，并且完全离线。
 
 
 ## 📝 功能简介
@@ -22,6 +134,12 @@ AutoWordTable是一款桌面应用程序，能够根据Excel知识库中的数�
 4. 点击"开始自动填表"按钮开始处理
 5. 程序将在Word模板所在目录生成"已填写表格.docx"文件
 
+## 🚀 视频演示
+<video controls>
+  <source src="video/autowordtable.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ## 📋 知识库格式要求
 
 Excel知识库必须包含以下列：
@@ -38,7 +156,7 @@ Excel知识库必须包含以下列：
 
 ## 📄 Word模板格式要求
 
-程序会自动识别Word文档中表格的第一列作为字段名，并将对应的值填入字段名称右侧的单元格中。
+程序会自动识别Word文档有文字存在的单元格内容作为字段名，并将对应的值填入字段名称右侧的单元格中。
 
 ## 🔧 安装要求
 
@@ -53,18 +171,19 @@ Excel知识库必须包含以下列：
 
 ### 方法1: 使用预编译版本
 
-1. 从[发布页面](https://github.com/your-username/autowordtable/releases)下载最新版本
-2. 解压缩文件
+1. 从我的Github页面下载Release最新版本应用程序
+2. 找到文件下载的位置
 3. 运行 `AutoWordTable.exe`
+4. 选择你的知识库和需要填写的表格文件。
 
 ### 方法2: 从源码安装
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Dukeway/autowordtable.git
+git clone https://github.com/Dukeway/Autowordtable.git
 
 # 进入项目目录
-cd autowordtable
+cd Autowordtable
 
 # 安装依赖
 pip install -r requirements.txt
@@ -82,7 +201,7 @@ A: 请确保Excel知识库中的字段名称与Word表格中的完全一致，�
 A: 目前仅支持.docx格式的文件。
 
 **Q: 是否支持复杂的表格格式?**  
-A: 本程序适用于结构简单的表格，复杂的合并单元格或嵌套表格可能无法正确识别。
+A: 本程序适用于结构简单的表格以及部分合并的单元格，复杂的合并单元格或嵌套表格可能无法正确识别。
 
 ## 📜 开源许可
 
