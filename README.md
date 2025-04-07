@@ -30,8 +30,8 @@ video folder
 ## 📋 Knowledge Base Format Requirements
 
 The Excel knowledge base must include the following columns:
-- `Field`: The name of the field to be identified in the table.
-- `Field Value`: The value to be filled in for the corresponding field.
+- `字段`: The name of the field to be identified in the table.
+- `字段值`: The value to be filled in for the corresponding field.
 
 Example:
 
