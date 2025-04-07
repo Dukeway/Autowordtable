@@ -1,9 +1,11 @@
 import customtkinter as ctk
-from tkinter import filedialog, messagebox
-import os
+import tkinter.filedialog as fd
 import pandas as pd
+import os
+import re
+import pythoncom
 import win32com.client as win32
-import traceback
+import threading
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("blue")
@@ -11,93 +13,114 @@ ctk.set_default_color_theme("blue")
 class AutoWordTableApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-
-        self.title("Autowordtable - --Office Word自动填表助手 by Dukeway Zhong----开源免费软件")
-        self.geometry("720x520")
+        self.title("Autowordtable - 个性化自动填表软件by Dukeway@qq.com (开源免费，请勿滥用)")
+        self.geometry("700x500")
 
         self.knowledge_path = ctk.StringVar()
         self.word_path = ctk.StringVar()
+        self.enable_fuzzy = ctk.BooleanVar(value=False)
+        self.enable_highlight = ctk.BooleanVar(value=False)
+        self.ignore_spaces = ctk.BooleanVar(value=False)
 
         self.create_widgets()
 
     def create_widgets(self):
-        ctk.CTkLabel(self, text="📄 选择知识库 (Excel)").pack(pady=(20, 5))
-        frame1 = ctk.CTkFrame(self)
-        frame1.pack(pady=5, fill="x", padx=20)
-        ctk.CTkEntry(frame1, textvariable=self.knowledge_path, width=500).pack(side="left", padx=5)
-        ctk.CTkButton(frame1, text="选择", command=self.browse_knowledge).pack(side="left")
+        ctk.CTkLabel(self, text="知识库 (Excel)：").pack(pady=(20, 5))
+        ctk.CTkEntry(self, textvariable=self.knowledge_path, width=500).pack()
+        ctk.CTkButton(self, text="选择知识库文件", command=self.select_knowledge).pack(pady=5)
 
-        ctk.CTkLabel(self, text="📄 选择Word模板 (docx)").pack(pady=(20, 5))
-        frame2 = ctk.CTkFrame(self)
-        frame2.pack(pady=5, fill="x", padx=20)
-        ctk.CTkEntry(frame2, textvariable=self.word_path, width=500).pack(side="left", padx=5)
-        ctk.CTkButton(frame2, text="选择", command=self.browse_word).pack(side="left")
+        ctk.CTkLabel(self, text="待填写表格 (Word)：").pack(pady=(20, 5))
+        ctk.CTkEntry(self, textvariable=self.word_path, width=500).pack()
+        ctk.CTkButton(self, text="选择Word文件", command=self.select_word).pack(pady=5)
 
-        ctk.CTkButton(self, text="▶️ 开始自动填表", command=self.run_autofill).pack(pady=20)
+        ctk.CTkCheckBox(self, text="启用字段模糊匹配", variable=self.enable_fuzzy).pack(pady=(10, 0))
+        ctk.CTkCheckBox(self, text="填写后字体红色标记字段值", variable=self.enable_highlight).pack(pady=(5, 0))
+        ctk.CTkCheckBox(self, text="字段忽略空格匹配", variable=self.ignore_spaces).pack(pady=(5, 10))
 
-        ctk.CTkLabel(self, text="📝 日志输出：").pack()
-        self.logbox = ctk.CTkTextbox(self, height=250)
-        self.logbox.pack(padx=20, fill="both", expand=True)
-        self.log("Autowordtable 启动成功 - 作者：Dukeway Zhong\n")
+        ctk.CTkButton(self, text="开始自动填表", command=self.run_filling_thread).pack(pady=10)
 
-    def browse_knowledge(self):
-        path = filedialog.askopenfilename(filetypes=[("Excel 文件", "*.xlsx")])
+        self.log_box = ctk.CTkTextbox(self, height=200, wrap="word", font=("Segoe UI Emoji", 12))
+        self.log_box.pack(padx=10, pady=10, fill="both", expand=True)
+
+    def log(self, message):
+        self.log_box.insert("end", message + "\n")
+        self.log_box.see("end")
+
+    def select_knowledge(self):
+        path = fd.askopenfilename(filetypes=[["Excel Files", "*.xlsx"]])
         if path:
             self.knowledge_path.set(path)
 
-    def browse_word(self):
-        path = filedialog.askopenfilename(filetypes=[("Word 文件", "*.docx")])
+    def select_word(self):
+        path = fd.askopenfilename(filetypes=[["Word Files", "*.docx"]])
         if path:
             self.word_path.set(path)
 
-    def log(self, text):
-        self.logbox.insert("end", text + "\n")
-        self.logbox.see("end")
+    def run_filling_thread(self):
+        threading.Thread(target=self.fill_word_table, daemon=True).start()
 
-    def run_autofill(self):
+    def fill_word_table(self):
         excel_path = self.knowledge_path.get()
         word_path = self.word_path.get()
 
         if not os.path.exists(excel_path) or not os.path.exists(word_path):
-            messagebox.showerror("错误", "请确保已选择有效的Excel和Word文件")
+            self.log("❌ 错误：文件路径无效。")
             return
 
-        try:
-            self.log("🔍 加载知识库...")
-            df = pd.read_excel(excel_path)
-            knowledge_dict = dict(zip(df['字段'], df['字段值']))
+        df = pd.read_excel(excel_path)
+        if "字段" not in df.columns or "字段值" not in df.columns:
+            self.log("❌ 错误：Excel 中必须包含 '字段' 和 '字段值' 两列。")
+            return
 
-            self.log("📝 打开Word文档...")
-            word = win32.gencache.EnsureDispatch('Word.Application')
-            doc = word.Documents.Open(word_path)
-            word.Visible = False
+        def normalize(text):
+            return re.sub(r"\s+", "", text) if self.ignore_spaces.get() else text
 
-            for table in doc.Tables:
-                for row in range(1, table.Rows.Count + 1):
-                    for col in range(1, table.Columns.Count):  # 留一个空格用于填值
-                        try:
-                            cell_text = table.Cell(row, col).Range.Text.strip().replace('\r', '').replace('\a', '')
-                            if cell_text in knowledge_dict:
-                                value = knowledge_dict[cell_text]
-                                table.Cell(row, col + 1).Range.Text = str(value)
-                                self.log(f"✔ 填入字段：{cell_text} → {value}")
-                        except Exception as e:
-                            self.log(f"⚠️ 跳过 Cell({row},{col}): {e}")
+        fields = {normalize(str(k)): str(v) for k, v in zip(df["字段"], df["字段值"])}
 
-            output_path = os.path.join(os.path.dirname(word_path), "已填写表格.docx")
-            doc.SaveAs(output_path)
-            doc.Close()
-            word.Quit()
+        pythoncom.CoInitialize()
+        word = win32.gencache.EnsureDispatch('Word.Application')
+        word.Visible = False
+        doc = word.Documents.Open(word_path)
 
-            self.log(f"✅ 填表完成，输出文件：{output_path}")
-            messagebox.showinfo("完成", f"填表完成，已保存为：\n{output_path}")
-            os.startfile(os.path.dirname(output_path))
+        self.log("📄 Word 文件已打开，开始填表...")
 
-        except Exception as e:
-            self.log("❌ 出错：" + str(e))
-            self.log(traceback.format_exc())
-            messagebox.showerror("异常", str(e))
+        for table in doc.Tables:
+            for row in range(1, table.Rows.Count + 1):
+                for col in range(1, table.Columns.Count):
+                    try:
+                        cell_text = table.Cell(row, col).Range.Text.strip().replace("\r", "").replace("\x07", "")
+                        norm_text = normalize(cell_text)
+                        match_key = None
 
-if __name__ == '__main__':
+                        if norm_text in fields:
+                            match_key = norm_text
+                        elif self.enable_fuzzy.get():
+                            for key in fields:
+                                if key in norm_text:
+                                    match_key = key
+                                    break
+
+                        if match_key:
+                            value = fields[match_key]
+                            target_col = col + 1 if col + 1 <= table.Columns.Count else col
+                            try:
+                                cell_range = table.Cell(row, target_col).Range
+                                cell_range.Text = value
+                                if self.enable_highlight.get():
+                                    cell_range.Font.Color = win32.constants.wdColorRed
+                                self.log(f"✅ 填写 '{match_key}' -> 第({row},{target_col}) 单元格: {value}")
+                            except Exception as e:
+                                self.log(f"⚠️ 无法填写 ({row},{target_col}): {str(e)}")
+                    except Exception:
+                        continue
+
+        output_path = os.path.join(os.path.dirname(word_path), "已填写表格.docx")
+        doc.SaveAs(output_path)
+        doc.Close()
+        word.Quit()
+
+        self.log("✅ 填表完成，输出文件：" + output_path)
+
+if __name__ == "__main__":
     app = AutoWordTableApp()
     app.mainloop()

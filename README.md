@@ -11,6 +11,9 @@ AutoWordTable is a desktop application that automatically fills tables in Word d
 - Quickly filling tables based on the knowledge base
 - Automatically generating and saving the filled documents
 - Detailed operation log recording
+- Fuzzy matching (optional)
+- Filled fields turn red (optional)
+- Ignore spaces when matching (optional)
 
 ## 🚀 Usage
 
@@ -125,6 +128,9 @@ AutoWordTable是一款桌面应用程序，能够根据Excel知识库中的数�
 - 根据知识库快速填充表格
 - 自动生成并保存填充后的文档
 - 详细的操作日志记录
+- 模糊匹配（可选）
+- 填充字段变红（可选）
+- 忽略空格匹配（可选）
 
 ## 🚀 使用方法
 
