@@ -86,6 +86,23 @@ A: Ensure that the field names in the Excel knowledge base exactly match those i
 
 **Q: What Word document formats are supported?**  
 A: Currently, only .docx files are supported.
+**Note**: Some tables are in `.doc` files. Even though you have “Save As” the `.doc` file to `.docx`, the content saved in the old `.doc` format (especially tables) may not necessarily be recognized as “standard Word table objects” within Word.
+
+This causes `win32com` to fail to find the “tables” you see when iterating through `.Tables`, and as a result, no operations or logs are generated.
+
+### **Solution : Force Conversion to Standard Tables**
+
+You can manually standardize the table structure as follows:
+
+1. Open your `.docx` file with Word.
+
+2. Select all the table content and **copy** it.
+
+3. In a new blank `.docx` file, **paste it as “Keep Source Formatting”**.
+
+4. Save the new file.
+
+> This is essentially letting Word “reconstruct” the old-format tables into true `Tables` objects.
 
 **Q: Does it support complex table formats?**  
 A: This program is suitable for simple structured tables and partially merged cells. Complex merged cells or nested tables may not be correctly recognized.
@@ -202,6 +219,25 @@ A: 请确保Excel知识库中的字段名称与Word表格中的完全一致，�
 
 **Q: 程序支持哪些Word文档格式?**  
 A: 目前仅支持.docx格式的文件。
+注意，某些表格是doc文件，虽然你把 `.doc` 文件“另存为”成了 `.docx`，但 **老版本 `.doc` 格式保存的内容（尤其是表格）在 Word 内部并不一定被识别为“标准的 Word 表格对象”**。
+
+这就导致 `win32com` 在遍历 `.Tables` 时，**没有找到你看到的“表格”**，也就没有任何操作或日志输出。
+
+### ✅ 解决方法：强制转换为标准表格
+
+你可以用如下步骤**手动标准化表格结构**：
+
+1. 用 Word 打开你的 `.docx` 文件
+
+2. 选中所有表格内容，**复制**
+
+3. 在一个新建的空白 `.docx` 文件中，**粘贴为“保留源格式”**
+
+4. 保存新文件
+
+> 这相当于让 Word 把老旧格式的表格“重构”为真正的 `Tables` 对象。
+
+
 
 **Q: 是否支持复杂的表格格式?**  
 A: 本程序适用于结构简单的表格以及部分合并的单元格，复杂的合并单元格或嵌套表格可能无法正确识别。
