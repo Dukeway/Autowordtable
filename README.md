@@ -14,13 +14,14 @@ AutoWordTable is a desktop application that automatically fills tables in Word d
 - Fuzzy matching (optional)
 - Filled fields turn red (optional)
 - Ignore spaces when matching (optional)
+- Multi-row data batch filling: Enable multi-row data batch filling mode (optional, note that the knowledge base table requires multiple fields!)
 
 ## 🚀 Usage
 
 1. Run the program and open the main interface.
-2. Click the "选择" button to choose the Excel knowledge base containing fields and field values.
-3. Click the "选择" button to choose the Word template file that needs to be filled.
-4. Click the "开始自动表格填充" button to begin processing.
+2. Click the "选择Excel" button to choose the Excel knowledge base containing fields and field values.
+3. Click the "选择Word" button to choose the Word template file that needs to be filled.
+4. Click the "开始自动表格填充（start）" button to begin processing.
 5. The program will generate a "Filled_Table.docx" file in the directory where the Word template is located.
 
 ## 🚀 Video Demonstration
@@ -30,8 +31,8 @@ video folder
 ## 📋 Knowledge Base Format Requirements
 
 The Excel knowledge base must include the following columns:
-- `字段`: The name of the field to be identified in the table.
-- `字段值`: The value to be filled in for the corresponding field.
+- `Field`: The name of the field to be identified in the table.
+- `Field Value`: The value to be filled in for the corresponding field.
 
 Example:
 
@@ -89,8 +90,7 @@ A: Currently, only .docx files are supported.
 **Note**: Some tables are in `.doc` files. Even though you have “Save As” the `.doc` file to `.docx`, the content saved in the old `.doc` format (especially tables) may not necessarily be recognized as “standard Word table objects” within Word.
 
 This causes `win32com` to fail to find the “tables” you see when iterating through `.Tables`, and as a result, no operations or logs are generated.
-
-### **Solution : Force Conversion to Standard Tables**
+### ✅ **Solution : Force Conversion to Standard Tables**
 
 You can manually standardize the table structure as follows:
 
@@ -103,6 +103,9 @@ You can manually standardize the table structure as follows:
 4. Save the new file.
 
 > This is essentially letting Word “reconstruct” the old-format tables into true `Tables` objects.
+
+**Q: Does it support complex table formats?**  
+A: This program is suitable for simple structured tables and partially merged cells. Complex merged cells or nested tables may not be correctly recognized.
 
 **Q: Does it support complex table formats?**  
 A: This program is suitable for simple structured tables and partially merged cells. Complex merged cells or nested tables may not be correctly recognized.
@@ -148,6 +151,7 @@ AutoWordTable是一款桌面应用程序，能够根据Excel知识库中的数�
 - 模糊匹配（可选）
 - 填充字段变红（可选）
 - 忽略空格匹配（可选）
+- 启用多行数据批量填充模式（可选，注意知识库表格需要多个字段！
 
 ## 🚀 使用方法
 
@@ -236,8 +240,6 @@ A: 目前仅支持.docx格式的文件。
 4. 保存新文件
 
 > 这相当于让 Word 把老旧格式的表格“重构”为真正的 `Tables` 对象。
-
-
 
 **Q: 是否支持复杂的表格格式?**  
 A: 本程序适用于结构简单的表格以及部分合并的单元格，复杂的合并单元格或嵌套表格可能无法正确识别。
