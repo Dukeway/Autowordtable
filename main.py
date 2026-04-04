@@ -21,7 +21,7 @@ class AutoWordTableApp(ctk.CTk):
         self.enable_fuzzy = ctk.BooleanVar(value=False)
         self.enable_highlight = ctk.BooleanVar(value=False)
         self.ignore_spaces = ctk.BooleanVar(value=False)
-        self.enable_multirow = ctk.BooleanVar(value=False)
+        self.enable_multirow = ctk.BooleanVar(value=False) 
 
         self.create_widgets()
 
@@ -125,7 +125,18 @@ class AutoWordTableApp(ctk.CTk):
                             value = fields[match_key]
                             target_col = col + 1 if col + 1 <= table.Columns.Count else col
                             try:
-                                cell_range = table.Cell(row, target_col).Range
+                                target_cell = table.Cell(row, target_col)
+                                target_text = (
+                                    target_cell.Range.Text.strip()
+                                    .replace("\r", "")
+                                    .replace("\x07", "")
+                                )
+                                if target_text != "":
+                                    self.log(
+                                        f"⏭️ 跳过 ({row},{target_col})：右侧已有内容，不覆盖"
+                                    )
+                                    continue
+                                cell_range = target_cell.Range
                                 cell_range.Text = value
                                 if self.enable_highlight.get():
                                     cell_range.Font.Color = win32.constants.wdColorRed
